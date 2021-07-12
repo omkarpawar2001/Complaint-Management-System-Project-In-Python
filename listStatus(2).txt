@@ -1,0 +1,66 @@
+import sqlite3
+from tkinter import *
+import tkinter.ttk as ttk
+import tkinter.messagebox as tkMessageBox
+import db
+
+root = Tk()
+root.title("Python - Display SQLite3 Data In TreeView")
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+width = 700
+height = 300
+x = (screen_width / 2) - (width / 2)
+y = (screen_height / 2) - (height / 2)
+root.geometry('%dx%d+%d+%d' % (width, height, x, y))
+root.resizable(0, 0)
+
+
+# ==================================METHODS============================================
+def populateView():
+    conn = sqlite3.connect('information.db')
+    cursor = conn.cursor()
+    tree.delete(*tree.get_children())
+    db.DBConnect()
+    cursor.execute("SELECT * FROM Status")
+    fetch = cursor.fetchall()
+    for data in fetch:
+        tree.insert('', 'end', values=(data[0], data[1]))
+    cursor.close()
+    conn.close()
+
+
+# ==================================FRAME==============================================
+Top = Frame(root, width=700, height=50, bd=8, relief="raise")
+Top.pack(side=TOP)
+Button_Group = Frame(root, width=700, height=50)
+Button_Group.pack(side=TOP)
+Buttons = Frame(Button_Group, width=200, height=50)
+Buttons.pack(side=LEFT)
+Buttons1 = Frame(Button_Group, width=500, height=50)
+Buttons1.pack(side=RIGHT)
+Body = Frame(root, width=700, height=300, bd=8, relief="raise")
+Body.pack(side=BOTTOM)
+
+# ==================================LABEL WIDGET=======================================
+txt_title = Label(Top, width=300, font=('arial', 14), text="Status of the Complaints")
+txt_title.pack()
+
+# ==================================BUTTONS WIDGET=====================================
+btn_display = Button(Buttons, width=15, text="Display All", command=populateView)
+btn_display.pack(side=LEFT)
+
+# ==================================LIST WIDGET========================================
+scrollbary = Scrollbar(Body, orient=VERTICAL)
+scrollbarx = Scrollbar(Body, orient=HORIZONTAL)
+tree = ttk.Treeview(Body, columns=("ID","Status"), selectmode="extended", height=300,
+                    yscrollcommand=scrollbary.set, xscrollcommand=scrollbarx.set)
+tree.heading('ID', text="ID", anchor=W)
+tree.heading('Status', text="Status", anchor=W)
+tree.pack()
+
+# ==================================INITIALIZATION=====================================
+
+if __name__ == '__main__':
+    root.mainloop()
+

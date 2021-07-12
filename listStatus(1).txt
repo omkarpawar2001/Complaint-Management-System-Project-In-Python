@@ -1,0 +1,25 @@
+from tkinter import *
+from tkinter.ttk import *
+from db import DBConnect
+import sqlite3
+
+
+class ListStatus:
+    def __init__(self):
+        self._dbconnect = DBConnect()
+        self._dbconnect.row_factory = sqlite3.Row
+        self._root = Tk()
+        self._root.title('List of Status')
+        tv = Treeview(self._root,columns=("ID","Status"))
+        tree.heading('ID', text="ID")
+        tree.heading('Status', text="Status")
+        tv.pack()
+
+        cursor = self._dbconnect.ListReq()
+        for row in cursor:
+            tv.insert('', 'end', '#{}'.format(row['ID']), text=row['ID'])
+            tv.insert('', 'end', '#{}'.format(row['Status']), text=row['Status'])
+            tv.set('#{}'.format(row['ID']), '#Status', row['Status'])
+
+
+
